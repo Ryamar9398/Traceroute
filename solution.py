@@ -49,14 +49,20 @@ def build_packet():
 
     header = struct.pack("bbHHh", ICMP_ECHO_REQUEST,0, myChecksum, myID, 1)
     data = struct.pack("d", time.time())
+
     # Append checksum to the header.
+    myChecksum = checksum(header+data)
+    if sys.platform =='darwin':
+        myChecksum = htons(myChecksum) & 0xffff
+    else:
+        myChecksum = htons(myChecksum)
 
 
     # Don’t send the packet yet , just return the final packet in this function.
     #Fill in end
 
     # So the function ending should look like this
-
+    header = struct.pack("bbHHh", ICMP_ECHO_REQUEST, 0, myChecksum, myID, 1)
     packet = header + data
     return packet
 
